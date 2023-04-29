@@ -1,4 +1,4 @@
-import info
+from netscan import info
 from setuptools import setup
 
 setup(
