@@ -14,3 +14,9 @@ With the script you can quickly check if a service of an address is running unde
 
 Soon...
 
+> Installation of the required packages
+```
+pip install fire
+pip install log4python
+```
+
