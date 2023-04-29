@@ -5,7 +5,6 @@ NAME: Final[str] = 'netscan'
 #  Version
 VERSION: Final[str] = '1.0.0'
 
-
 LONG_DESCRIPTION: Final[str] = ''
 SHORT_DESCRIPTION: Final[str] = ''
 
