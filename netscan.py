@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import info
+
 import socket
 import os
 
@@ -11,9 +13,6 @@ from datetime import datetime
 Default logger for system.
 """
 __LOGGER: Final[log] = log(module_name='NetScan')  # Create logger
-
-#  Version of server
-__VERSION: Final[str] = '1.0.0'
 
 
 def validate_connection(address: str, port: int = 80, timeout: int = 1):
@@ -84,7 +83,7 @@ def __start():
     Start method with parameters.
     :return: None
     """
-    __LOGGER.info(f'Starting NetScan v{__VERSION} ...')
+    __LOGGER.info(f'Starting NetScan v{info.VERSION} ...')
 
     import sys
     __LOGGER.info(f'OS platform: {sys.platform}. (Py-Version: {sys.version.split(" ")[0]})')
