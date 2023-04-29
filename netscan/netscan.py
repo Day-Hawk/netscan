@@ -87,43 +87,20 @@ def __terminate_socket(socket_to_kill: socket.socket):
     __LOGGER.debug('Successfully killed socket.')
 
 
-__ENV_HOST: Final[str] = 'NETSCAN_HOST'
-__ENV_PORT: Final[str] = 'NETSCAN_PORT'
-
-
-def __collect_environment():
-    """
-
-    :return:
-    """
-
-    host = os.getenv(__ENV_HOST)
-    port = os.getenv(__ENV_PORT)
-
-    if host is None or port is None:
-        raise RuntimeError('Can not build from environment.')
-
-    try:
-        return {'host': str(host), 'port': int(port)}
-    except ValueError:
-        raise RuntimeError('Port is not a number.')
-
-
 # Start statement if this file was called as main
 if __name__ == '__main__':
     import sys
 
-    __LOGGER.info('Since "netscan.py" has been executed, it can be operated directly with the input')
+    __LOGGER.info('Since "netscan.py" has been executed, it can be operated directly with the input.')
     __LOGGER.info(f'Starting NetScan v{info.VERSION} ...')
     __LOGGER.info(f'OS platform: {sys.platform}. (Py-Version: {sys.version.split(" ")[0]})')
-
-    __LOGGER.info('<CTRL + C> or type "kill" to terminate program.')
-    __LOGGER.info('Type "clear" to remove configuration.')
+    __LOGGER.info('Commands: clear(Clear configuration) and kill(same as <CTRL + C>)')
+    __LOGGER.info('<CTRL + C> to terminate program.')
 
     host: str = ''
     port: int = -1
 
-    __LOGGER.info(f'Enter host:')
+    __LOGGER.info(f'Enter first host:')
     while True:
         console_input = input().lower()
         if console_input == 'kill':
