@@ -15,6 +15,19 @@ Default logger for system.
 __LOGGER: Final[log] = log(module_name='NetScan')  # Create logger
 
 
+class SocketConnection(object):
+    host: str
+    port: int
+
+    def __init__(self):
+        self.host = ''
+        self.port = -1
+
+    def reset(self):
+        self.host = ''
+        self.port = -1
+
+
 def validate_connection(address: str, port: int = 80, timeout: int = 1):
     """
     If the timeout time is reached, the connection is considered as not possible.
@@ -97,39 +110,36 @@ if __name__ == '__main__':
     __LOGGER.info('Commands: clear(Clear configuration) and kill(same as <CTRL + C>)')
     __LOGGER.info('<CTRL + C> to terminate program.')
 
-    host: str = ''
-    port: int = -1
+    connection = SocketConnection()
 
     __LOGGER.info(f'Enter first host:')
     while True:
         console_input = input().lower()
         if console_input == 'kill':
-            exit()
+            exit()  # Kill task.
         elif console_input == 'clear':
-            host = ''
-            port = -1
+            connection.reset()
             __LOGGER.info(f'Cleared configuration, to start over enter host:')
             continue
 
-        if host == '':
-            host = console_input
-            __LOGGER.info(f'Set {host} as host, enter port to scan:')
+        if connection.host == '':
+            connection.host = console_input
+            __LOGGER.info(f'Set {connection.host} as host, enter port to scan:')
             continue
 
-        if port is not port_in_range(port):
+        if not port_in_range(connection.port):
             try:
-                port_input = int(console_input)
+                port_input = int(console_input)  # If input is not a number -> Except block
 
-                if port_in_range(port_input):
-                    port = port_input
-                    __LOGGER.info(f'Set {port} as port.')
+                if port_in_range(port_input):  # Check if input is in range.
+                    connection.port = port_input  # If given port is valid use port for scan.
+                    __LOGGER.info(f'Set {connection.port} as port.')
 
-                    validate_connection(address=host, port=port)
-                    host = ''
-                    port = -1
+                    validate_connection(address=connection.host, port=connection.port)  # Scan
+                    connection.reset()
                     __LOGGER.info(f'Waiting for next host:')
                 else:
                     __LOGGER.error(f'Given port {port_input} is not in range 1...65535.')
-            except ValueError:
+            except ValueError:  # Given input was not a number.
                 __LOGGER.error(f'{console_input} is not a number.')
             continue
