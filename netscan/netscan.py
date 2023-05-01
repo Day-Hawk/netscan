@@ -132,7 +132,14 @@ if __name__ == '__main__':
         if connection is None:  # Check if configuration is present.
             connection = SocketConfiguration()  # If no configuration is present, create new.
 
-        console_input = input().lower()
+        console_input = ''
+
+        try:
+            console_input = input().lower()
+        except KeyboardInterrupt:
+            exit()  # Exit program.
+            pass
+
         if console_input == 'kill':
             exit()  # Kill task.
         elif console_input == 'clear':
