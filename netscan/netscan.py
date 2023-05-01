@@ -1,31 +1,15 @@
 #!/usr/bin/env python3
 import info
-
 import socket
-import os
-
 from typing import Final
-from log4python.Log4python import log
-
 from datetime import datetime
+
+from log4python.Log4python import log
 
 """
 Default logger for system.
 """
 __LOGGER: Final[log] = log(module_name='NetScan')  # Create logger
-
-
-class SocketConnection(object):
-    host: str
-    port: int
-
-    def __init__(self):
-        self.host = ''
-        self.port = -1
-
-    def reset(self):
-        self.host = ''
-        self.port = -1
 
 
 def validate_connection(address: str, port: int = 80, timeout: int = 1):
@@ -47,10 +31,10 @@ def validate_connection(address: str, port: int = 80, timeout: int = 1):
 
         delta_time = (datetime.now() - request_time).total_seconds() * 1000
         __LOGGER.info(f'The connection({address}:{port}) can be established! [{delta_time:.3f}ms ping.]')
-        return response(True, delta_time)  # Build response with running=True and no ping=delta_time
+        return __response_dict(True, delta_time)  # Build response with running=True and no ping=delta_time
     except socket.error:
         __LOGGER.error(f'The connection({address}:{port}) is not available!')
-        return response(False)  # Build response with running=False and no ping=-1(invalid)
+        return __response_dict(False)  # Build response with running=False and no ping=-1(invalid)
         pass
 
     finally:
@@ -58,7 +42,7 @@ def validate_connection(address: str, port: int = 80, timeout: int = 1):
 
 
 # Response dict of parameters.
-def response(running: bool, ping: float = -1):
+def __response_dict(running: bool, ping: float = -1):
     """
     Create dict with parameters.
 
@@ -70,15 +54,6 @@ def response(running: bool, ping: float = -1):
         'running': running,
         'ping': ping
     }
-
-
-def port_in_range(port_to_check: int):
-    """
-
-    :param port_to_check:
-    :return:
-    """
-    return 0 < port_to_check < 65535
 
 
 def __terminate_socket(socket_to_kill: socket.socket):
@@ -100,6 +75,46 @@ def __terminate_socket(socket_to_kill: socket.socket):
     __LOGGER.debug('Successfully killed socket.')
 
 
+class SocketConfiguration(object):
+    """
+    Configuration for socket.
+    """
+
+    host: str
+    port: int
+
+    def __init__(self):
+        """
+        Initialize configuration.
+        """
+        self.host = ''
+        self.port = -1
+
+    # Method to update configuration port.
+    def update_port(self, port):
+        """
+        Update port of this configuration.
+
+        :param port: to update.
+        :return: True, if port is a number and in port range.
+        """
+        unchecked_port = int(port)  # If input is not a number -> Except block
+
+        if 0 < unchecked_port < 65535:  # Check if input is in range.
+            self.port = unchecked_port  # If given port is valid use port for scan.
+            return True
+        return False
+
+    # Connect with local configuration.
+    def connect(self):
+        """
+        Connect with local configuration.
+
+        :return: dict with 'running':<True if service is running> 'ping':<Ping as float>
+        """
+        validate_connection(address=self.host, port=self.port)  # Scan
+
+
 # Start statement if this file was called as main
 if __name__ == '__main__':
     import sys
@@ -110,36 +125,35 @@ if __name__ == '__main__':
     __LOGGER.info('Commands: clear(Clear configuration) and kill(same as <CTRL + C>)')
     __LOGGER.info('<CTRL + C> to terminate program.')
 
-    connection = SocketConnection()
+    connection = None
 
     __LOGGER.info(f'Enter first host:')
     while True:
+        if connection is None:  # Check if configuration is present.
+            connection = SocketConfiguration()  # If no configuration is present, create new.
+
         console_input = input().lower()
         if console_input == 'kill':
             exit()  # Kill task.
         elif console_input == 'clear':
-            connection.reset()
+            connection = None
             __LOGGER.info(f'Cleared configuration, to start over enter host:')
             continue
 
         if connection.host == '':
-            connection.host = console_input
+            connection.host = 'localhost' if console_input == '' else console_input
             __LOGGER.info(f'Set {connection.host} as host, enter port to scan:')
             continue
 
-        if not port_in_range(connection.port):
+        if connection.port < 0:
             try:
-                port_input = int(console_input)  # If input is not a number -> Except block
-
-                if port_in_range(port_input):  # Check if input is in range.
-                    connection.port = port_input  # If given port is valid use port for scan.
+                if connection.update_port(80 if console_input == '' else console_input):
                     __LOGGER.info(f'Set {connection.port} as port.')
-
-                    validate_connection(address=connection.host, port=connection.port)  # Scan
-                    connection.reset()
+                    connection.connect()  # Scan
+                    connection = None  # Reset configuration
                     __LOGGER.info(f'Waiting for next host:')
                 else:
-                    __LOGGER.error(f'Given port {port_input} is not in range 1...65535.')
+                    __LOGGER.error(f'Given port {console_input} is not in range 1...65535.')
             except ValueError:  # Given input was not a number.
                 __LOGGER.error(f'{console_input} is not a number.')
             continue
