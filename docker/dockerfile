@@ -1,6 +1,7 @@
 FROM python:alpine3.17
 
 COPY ./log4p.py /home/netscan/log4p.py
+COPY ./info.py /home/netscan/info.py
 COPY ./netscan.py /home/netscan/netscan.py
 WORKDIR /home/netscan
 
