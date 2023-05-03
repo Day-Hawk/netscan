@@ -21,6 +21,21 @@ def validate_connection(address: str, port: int = 80, timeout: int = 1):
     :param timeout: Time to wait for response of partner.
     :return:
     """
+
+    # Response dict of parameter
+    def response(running: bool, ping: float = -1):
+        """
+        Create dict with parameters.
+
+        :param running: True, if connection is valid. False if connection is not available or valid.
+        :param ping: Given time for request and response in ms.
+        :return: Object combining running and ping.
+        """
+        return {
+            'running': running,
+            'ping': ping
+        }
+
     test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Instance of socket.
     request_time = datetime.now()
     try:
@@ -31,48 +46,20 @@ def validate_connection(address: str, port: int = 80, timeout: int = 1):
 
         delta_time = (datetime.now() - request_time).total_seconds() * 1000
         __LOGGER.info(f'The connection({address}:{port}) can be established! [{delta_time:.3f}ms ping.]')
-        return __response_dict(True, delta_time)  # Build response with running=True and no ping=delta_time
+        return response(True, delta_time)  # Build response with running=True and no ping=delta_time
+
     except socket.error:
         __LOGGER.error(f'The connection({address}:{port}) is not available!')
-        return __response_dict(False)  # Build response with running=False and no ping=-1(invalid)
+        return response(False)  # Build response with running=False and no ping=-1(invalid)
         pass
 
     finally:
-        __terminate_socket(test_socket)  # Close and kill socket with method
-
-
-# Response dict of parameters.
-def __response_dict(running: bool, ping: float = -1):
-    """
-    Create dict with parameters.
-
-    :param running: True, if connection is valid. False if connection is not available or valid.
-    :param ping: Given time for request and response in ms.
-    :return: Object combining running and ping.
-    """
-    return {
-        'running': running,
-        'ping': ping
-    }
-
-
-def __terminate_socket(socket_to_kill: socket.socket):
-    """
-    Shutdown and close an existing connection.
-
-    :param socket_to_kill: socket to disconnect and kill.
-    :return: None, no return value.
-    """
-
-    if socket_to_kill is None:  # No socket to kill. Ignore call.
-        return
-
-    try:
-        socket_to_kill.shutdown(socket.SHUT_RDWR)  # Shutdown socket.
-    except OSError:
-        pass  # Ignore error
-    socket_to_kill.close()  # At least close socket.
-    __LOGGER.debug('Successfully killed socket.')
+        try:
+            test_socket.shutdown(socket.SHUT_RDWR)  # Shutdown socket.
+        except OSError:
+            pass  # Ignore error
+        test_socket.close()  # At least close socket.
+        __LOGGER.debug('Successfully killed socket.')
 
 
 class SocketConfiguration(object):
