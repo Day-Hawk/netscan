@@ -11,12 +11,13 @@ With the script you can quickly check if a service of an address is running unde
 </div>
 
 ---
+### Description
 
-Soon...
+The tool is a simple way to see if a socket is available or not.
+I have written the tool out of my own interest and now make it available here.
+Das Script `netscan.py` kann direct nach dem clonen des Repos ausgeführt werden.
 
-> Installation of the required packages
-```
-pip install fire
-pip install log4python
-```
+Also conveniently available with docker:
+> docker pull ghcr.io/day-hawk/netscan:<VERSION>
 
+---
