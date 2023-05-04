@@ -17,7 +17,7 @@ The tool is a simple way to see if a socket is available or not.
 I have written the tool out of my own interest and now make it available here.
 Das Script `netscan.py` kann direct nach dem clonen des Repos ausgeführt werden.
 
-Also conveniently available with docker:
-> docker pull ghcr.io/day-hawk/netscan:<VERSION>
+Also conveniently available with docker (Version 1.0.0):
+> docker pull ghcr.io/day-hawk/netscan:1.0.0
 
 ---
