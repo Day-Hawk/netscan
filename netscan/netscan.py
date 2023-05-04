@@ -6,6 +6,12 @@ from typing import Final
 
 from datetime import datetime
 
+#
+# Container build:
+# docker build -t <TAG> -f ../docker/dockerfile .
+#
+
+
 # Define format of logger
 __LOG_FORMATTER: Final[logging.Formatter] = logging.Formatter(
     fmt='[%(asctime)s] %(levelname)-8s (%(name)s) - %(message)s')
