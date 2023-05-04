@@ -20,4 +20,9 @@ Das Script `netscan.py` kann direct nach dem clonen des Repos ausgeführt werden
 Also conveniently available with docker (Version 1.0.0):
 > docker pull ghcr.io/day-hawk/netscan:1.0.0
 
+Start container:
+> docker run -i -t ghcr.io/day-hawk/netscan:1.0.0
+
+Don't forget the `-i` and `-t` parameters for docker. Otherwise, no console input is available.
+
 ---
