@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
 import info
 import socket
+import logging
 from typing import Final
+
 from datetime import datetime
 
-from log4python.Log4python import log
+# Define format of logger
+__LOG_FORMATTER: Final[logging.Formatter] = logging.Formatter(
+    fmt='[%(asctime)s] %(levelname)-8s (%(name)s) - %(message)s')
 
-"""
-Default logger for system.
-"""
-__LOGGER: Final[log] = log(module_name='NetScan')  # Create logger
+# Define logger
+__LOGGER: Final[logging.Logger] = logging.getLogger('NetScan')
+__LOGGER.setLevel(logging.DEBUG)
+
+# create console handler
+__LOG_CONSOLE_HANDLER: Final[logging.StreamHandler] = logging.StreamHandler()
+__LOG_CONSOLE_HANDLER.setFormatter(__LOG_FORMATTER)
+
+# Add console handler to logger
+__LOGGER.addHandler(__LOG_CONSOLE_HANDLER)
 
 
 def validate_connection(address: str, port: int = 80, timeout: int = 1):

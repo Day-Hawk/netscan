@@ -1,17 +1,17 @@
+# Origin: https://github.com/docker-library/python/blob/331890ef059fae05f84c652520b78c340526dc71/3.12-rc/alpine3.17/Dockerfile
 FROM python:alpine3.17
 
-COPY ./log4p.py /home/netscan/log4p.py
-COPY ./info.py /home/netscan/info.py
-COPY ./netscan.py /home/netscan/netscan.py
+# Define working directory for software.
 WORKDIR /home/netscan
 
-RUN chmod -Rv 7777 /home/netscan # Change permission
+# Copy scripts into container.
+COPY ./info.py /home/netscan/info.py
+COPY ./netscan.py /home/netscan/netscan.py
 
-RUN pip install fire
-RUN pip install log4python
-
+# GitHub labels.
 LABEL org.opencontainers.image.source=https://github.com/Day-Hawk/netscan
 LABEL org.opencontainers.image.description="Simple tool to check if an application is running under host and port."
 LABEL org.opencontainers.image.licenses="Apache License 2.0"
 
+# Execute command in WORKDIR
 CMD ["python3", "netscan.py"]
