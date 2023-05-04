@@ -47,7 +47,7 @@ def validate_connection(address: str, port: int = 80, timeout: int = 1):
         }
 
     test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Instance of socket.
-    request_time = datetime.now()
+    request_time = datetime.now()  # Save start time of request.
     try:
         __LOGGER.debug(f'Try to connect to {address}, {port}. [Timeout: {timeout}s]')
         test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Create socket instance.
